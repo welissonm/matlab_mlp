@@ -1,8 +1,11 @@
-function y = sim(inputData, nnet)
+function [y,nnff] = sim(inputData, nnet)
 	if(size(inputData,1) ~= size(nnet.layer{1,1}.w,2))
 		error('O conjunto de dados de entrada possui dimensoes incompativeis em relacao as entradas da rede');
 	end
 	[n,m] = size(inputData);
+	if(isnnff(nnet) ~= 1)
+		error('O argumento #2 deve ser uma rede neural feedforwad valida');
+	end
   nnet.layer{1,1}.net = zeros(n,m);
   nnet.layer{1,1}.y = zeros(n,m);
   for j=1:m
@@ -16,4 +19,5 @@ function y = sim(inputData, nnet)
     end
   end
 	y = nnet.layer{1,end}.y;
+  nnff = nnet;
 end
