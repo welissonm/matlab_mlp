@@ -9,4 +9,9 @@ b{1,2} = [0.6;0.6];
 opt = struct('weight',w,'bias',b);
 nnff = newff(2,[2,2],opt);
 data = [0.05,0.05;0.10,0.10];
-[y,nnff] = sim(data,nnff);
+dataset = struct('data',data,'d',[0.01,0.01;0.99,0.99]);
+y = sim(data,nnff);
+opt = struct('eta',0.5,'epochMax',5000);
+newnnf = backpropagation(dataset,nnff, 0.0001,opt);
+
+
