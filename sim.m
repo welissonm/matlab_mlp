@@ -9,12 +9,14 @@ function [y,nnff] = sim(inputData, nnet)
   nnet.layer{1,1}.net = zeros(n,m);
   nnet.layer{1,1}.y = zeros(n,m);
   for j=1:m
-    nnet.layer{1,1}.net(:,j) = sum(kron(inputData(:,j),nnet.layer{1,1}.w),1)' + nnet.layer{1,1}.bias;
+    %nnet.layer{1,1}.net(:,j) = sum(kron(inputData(:,j),nnet.layer{1,1}.w),1)' + nnet.layer{1,1}.bias;
+	nnet.layer{1,1}.net(:,j) = nnet.layer{1,1}.w*inputData(:,j) + nnet.layer{1,1}.bias;
     nnet.layer{1,1}.y(:,j) = nnet.layer{1,1}.f(nnet.layer{1,1}.net(:,j));
   end
   for j=1:m
     for k=2:nnet.layers
-      nnet.layer{1,k}.net(:,j) = sum(kron(nnet.layer{1,k-1}.y(:,j),nnet.layer{1,k}.w),1)' + nnet.layer{1,k}.bias;
+      %nnet.layer{1,k}.net(:,j) = sum(kron(nnet.layer{1,k-1}.y(:,j),nnet.layer{1,k}.w),1)' + nnet.layer{1,k}.bias;
+	  nnet.layer{1,k}.net(:,j) = nnet.layer{1,k}.w*nnet.layer{1,k-1}.y(:,j) + nnet.layer{1,k}.bias;
       nnet.layer{1,k}.y(:,j) = nnet.layer{1,k}.f(nnet.layer{1,k}.net(:,j));
     end
   end

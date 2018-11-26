@@ -26,17 +26,17 @@ function newff = backpropagation(dataset,nnet, tol,varargin)
 	eqm = tol+1;
 	while( eqm > tol)
 		for k=1:m
-			y = sim(dataset.data(:,k),nnet);
+			[y,newff] = sim(dataset.data(:,k),newff);
 			erro = dataset.d(:,k)-y;
 			eqm = ((k-1)*eqm + erro)/k;
-			delta(1,nnet.layers) = erro*dlogsim(nnet.layer(1,nnet.layers).net);
-			for i=nnet.layers-1:-1:1
-				dW(1,i+1) = eta*delta(1,i+1)*nnet.layer(1,i).y;
-				nnet.layer(1,i+1).w = nnet.layer(1,i+1).w + dW(1,i+1);
-				delta(1,i) = -(delta(1,i+1)*nnet.layer(1,i+1).w)*dlogsim(nnet.layer(1,i).net);
+			delta(1,newff.layers) = erro*dlogsim(newff.layer(1,newff.layers).net);
+			for i=newff.layers-1:-1:1
+				dW(1,i+1) = eta*delta(1,i+1)*newff.layer(1,i).y;
+				newff.layer(1,i+1).w = newff.layer(1,i+1).w + dW(1,i+1);
+				delta(1,i) = -(delta(1,i+1)*newff.layer(1,i+1).w)*dlogsim(newff.layer(1,i).net);
 			end
-			dW(1,1) = eta*delta(1,2)*nnet.layer(1,2).y;
-			nnet.layer(1,1).w = nnet.layer(1,1).w + dW(1,1);
+			dW(1,1) = eta*delta(1,2)*newff.layer(1,2).y;
+			newff.layer(1,1).w = newff.layer(1,1).w + dW(1,1);
 		end
 	end
 end
