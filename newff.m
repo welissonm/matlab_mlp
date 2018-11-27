@@ -3,7 +3,7 @@ function nnet = newff(numInput,layers, varargin)
 	if(numInput <= 0 )
 		error('o numero de entradas deve ser maior que zero');
 	end
-	nnet = struct("layers",length(layers),"numInput",numInput);
+	nnet = struct('layers',length(layers),'numInput',numInput);
 	nnet.layer = cell(1,nnet.layers);
 	w = [];
 	b = [];
@@ -35,8 +35,8 @@ function nnet = newff(numInput,layers, varargin)
 	%		"net",zeros(layers(i),1),"y",zeros(layers(i),1),"f",@logsig);
 	%end
 	for i=1:nnet.layers
-			nnet.layer(1,i) = struct("bias",b(1,i),"w",w(1,i),...
-			"net",zeros(layers(i),1),"y",zeros(layers(i),1),"f",@logsig);
+			nnet.layer{1,i} = struct('bias',b(1,i),'w',w(1,i),...
+			'net',zeros(layers(i),1),'y',zeros(layers(i),1),'f',@logsig);
 	end	
 end
 %https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/

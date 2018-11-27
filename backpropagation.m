@@ -26,10 +26,10 @@ function newff = backpropagation(dataset,nnet, tol,varargin)
 	end
 	if(~isempty(varargin))
 		option = varargin{1};
-		if(isfield('epochMax',option))
+		if(isfield(option,'epochMax'))
 			epochMax = option.epochMax;
 		end
-		if(isfield('eta',option))
+		if(isfield(option,'eta'))
 			eta = option.eta;
 		end
 	end
@@ -43,17 +43,15 @@ function newff = backpropagation(dataset,nnet, tol,varargin)
 			[y,newff] = sim(dataset.data(:,k),newff);
 			erro = dataset.d(:,k)-y;
 			sumErrorQ = sumErrorQ + erro.^2;
-			delta(1,newff.layers) = erro.*dlogsim(newff.layer{1,newff.layers}.net);
+			delta{1,newff.layers} = erro.*dlogsim(newff.layer{1,newff.layers}.net);
 			for i=newff.layers-1:-1:1
-				dW(1,i+1) = zeros(size(newff.layer{1,i+1}.w));
-				%for j=1:size(newff.layer{1,i}.y,1)
-				%	dW{1,i+1}(:,j) = delta{1,i+1}*newff.layer{1,i}.y(j);
-				%end
-				dW(1,i+1) = kron(delta{1,i+1},newff.layer{1,i}.y');
+				dW{1,i+1} = kron(delta{1,i+1},newff.layer{1,i}.y');
+                wOld = newff.layer{1,i+1}.w;
 				newff.layer{1,i+1}.w = newff.layer{1,i+1}.w + eta*dW{1,i+1};
+                %delta{1,i} = (wOld'*delta{1,i+1}).*dlogsim(newff.layer{1,i}.net);
 				delta{1,i} = -(newff.layer{1,i+1}.w'*delta{1,i+1}).*dlogsim(newff.layer{1,i}.net);
 			end
-			dW(1,1) = kron(delta{1,1},dataset.data(:,1)');
+			dW{1,1} = kron(delta{1,1},dataset.data(:,1)');
 			newff.layer{1,1}.w = newff.layer{1,1}.w + eta*dW{1,1};
 		end
 		eqm = sumErrorQ/m;
