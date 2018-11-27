@@ -18,8 +18,8 @@ function nnet = newff(numInput,layers, varargin)
 			b = struct('bias',cell(1,nnet.layers));
 			for i=1:nnet.layers
 				b(1,i).bias = -1*ones(layers(i),1);
-			end
-    end
+            end
+        end
   else
     w = cell(1,nnet.layers);
     b = cell(1,nnet.layers);
@@ -29,11 +29,7 @@ function nnet = newff(numInput,layers, varargin)
       w(1,i) = rand(layers(i),layers(i-1));
       b(1,i) = -1*ones(layers(i),1);
     end
-	end
-	%for i=1:nnet.layers
-	%		nnet.layer(1,i) = struct("bias",-1*ones(layers(i),1),"w",rand(1,layers(i)),...
-	%		"net",zeros(layers(i),1),"y",zeros(layers(i),1),"f",@logsig);
-	%end
+  end
 	for i=1:nnet.layers
 			nnet.layer{1,i} = struct('bias',b(1,i),'w',w(1,i),...
 			'net',zeros(layers(i),1),'y',zeros(layers(i),1),'f',@logsig);

@@ -1,3 +1,4 @@
+%%Script de validacao do metodo de treinamento
 clear all
 clc
 w = cell(1,2);
