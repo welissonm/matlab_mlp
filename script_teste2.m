@@ -12,7 +12,7 @@ nnff = newff(2,[2,2],opt);
 data = [0.05,0.05;0.10,0.10];
 dataset = struct('data',data,'d',[0.01,0.01;0.99,0.99]);
 y = sim(data,nnff);
-opt = struct('eta',0.5,'epochMax',10000);
+opt = struct('eta',0.5,'epochMax',15000, 'alpha',(0.5/0.9)*(0.75-0.05));
 newnnf = backpropagation(dataset,nnff, 1e-6,opt);
 sim(dataset.data,newnnf)
 

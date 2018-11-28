@@ -1,5 +1,6 @@
 function newff = backpropagation(dataset,nnet, tol,varargin)
 	eta = 0.5;
+	alpha = 0.0;
 	newff = nnet;
 	erro = cell(1,nnet.layers);
 	epoch = 0;
@@ -32,9 +33,18 @@ function newff = backpropagation(dataset,nnet, tol,varargin)
 		if(isfield(option,'eta'))
 			eta = option.eta;
 		end
+    if(isfield(option,'alpha'))
+			alpha = option.alpha;
+		end
 	end
 	delta = cell(1,nnet.layers);
 	dW = cell(1,nnet.layers);
+	wOld = cell(1,nnet.layers);
+  for i=1:nnet.layers
+    %wOld{1,i} = zeros(size(newff.layer{1,i}.w));
+    wOld{1,i} = newff.layer{1,i}.w;
+  end
+  wNew = wOld;
 	while(~stp)
 		sumErrorQ = 0;
 		k = 1;
@@ -46,13 +56,15 @@ function newff = backpropagation(dataset,nnet, tol,varargin)
 			delta{1,newff.layers} = erro.*dlogsim(newff.layer{1,newff.layers}.net);
 			for i=newff.layers-1:-1:1
 				dW{1,i+1} = kron(delta{1,i+1},newff.layer{1,i}.y');
-                wOld = newff.layer{1,i+1}.w;
-				newff.layer{1,i+1}.w = newff.layer{1,i+1}.w + eta*dW{1,i+1};
-                %delta{1,i} = (wOld'*delta{1,i+1}).*dlogsim(newff.layer{1,i}.net);
+				wNew{1,i+1} = newff.layer{1,i+1}.w + alpha*(newff.layer{1,i+1}.w - wOld{1,i+1}) + eta*dW{1,i+1};
+				wOld{1,i+1} = newff.layer{1,i+1}.w;
+				newff.layer{1,i+1}.w = wNew{1,i+1};
 				delta{1,i} = -(newff.layer{1,i+1}.w'*delta{1,i+1}).*dlogsim(newff.layer{1,i}.net);
 			end
 			dW{1,1} = kron(delta{1,1},dataset.data(:,1)');
-			newff.layer{1,1}.w = newff.layer{1,1}.w + eta*dW{1,1};
+      wNew{1,1} = newff.layer{1,1}.w + alpha*(newff.layer{1,1}.w - wOld{1,1}) + eta*dW{1,1};
+      wOld{1,1} = newff.layer{1,1}.w;
+			newff.layer{1,1}.w = wNew{1,1}; 
 		end
 		eqm = sumErrorQ/m;
 		if(max(sumErrorQ/m) <= tol)
