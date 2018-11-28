@@ -67,7 +67,7 @@ function newff = backpropagation(dataset,nnet, tol,varargin)
 			newff.layer{1,1}.w = wNew{1,1}; 
 		end
 		eqm = sumErrorQ/m;
-		if(max(sumErrorQ/m) <= tol)
+		if(sqrt(max(sumErrorQ)/m) <= tol)
 			stp = 1;
 		elseif(epoch == epochMax)
 			stp =1;
