@@ -1,8 +1,10 @@
-function [time,u] = prs_t(amp, delay,timeSample,tspan)
+function [time,u,t_trans,u_trans] = prs_t(amp, delay,timeSample,tspan)
   ampMax = 0;
   ampMin = 0;
   tInit = 0;
   tEnd = 0;
+  t_trans = []; % o tempo em que as transicoes do sinal ocorrem
+  u_trans = []; % o valores de transicao
   rangeTime = [];
   if(size(size(amp),2) ==2)
     ampMin = amp(1);
@@ -57,16 +59,20 @@ function [time,u] = prs_t(amp, delay,timeSample,tspan)
   values = zeros(length(time),1);
   t = tInit;
   i = 1;
+  t_trans= [t_trans, t]; 
   while(t<tEnd)
     tr = timeSample*randi(rangeTime);
     if(tEnd -t < tr)
       tr = tEnd -t;
     end
     t = t+tr;
+    t_trans = [t_trans, t];
     vr = randNum(ampMin,ampMax);
+    u_trans = [u_trans, vr];
     values(i:floor((t-tInit)/timeSample),1) = vr;
     i = floor((t-tInit)/timeSample)+1;
   end
+  t_trans = t_trans(1:end-1);
   values(i:end) = vr;
   u = values;
 end
