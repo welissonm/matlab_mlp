@@ -3,6 +3,7 @@ function [time,u] = prs_t(amp, delay,timeSample,tspan)
   ampMin = 0;
   tInit = 0;
   tEnd = 0;
+  rangeTime = [];
   if(size(size(amp),2) ==2)
     ampMin = amp(1);
     ampMax = amp(2);
@@ -18,8 +19,22 @@ function [time,u] = prs_t(amp, delay,timeSample,tspan)
   if(timeSample <= 0)
     error('O argumento #3 deve ser maior que zero.');
   end
-  if(2*timeSample >= delay)
-    error('O argumento #2 deve ser no minimo 2 vezes maior que o argumento #3');
+  if(isempty(delay) || length(delay) <= 0)
+	error('o argumento #2 nao pode ser nulo.');
+  elseif(length(delay)==1)
+	if(2*timeSample >= delay)
+		error('O argumento #2 deve ser no minimo 2 vezes maior que o argumento #3');
+	end
+	nt = floor(delay/timeSample);
+	rangeTime = [nt,2*nt];
+  else
+	rangeTime = delay;
+	if(rangeTime(1) >= rangeTime(2))
+		error('o elemento do indice 1 do argumento #2 deve ser menor que o indice 2');
+	end
+	if(2*timeSample > rangeTime(1))
+		error('O argumento #2 deve ter seus lementos no minimo 2 vezes maior que o argumento #3');
+	end
   end
   if(size(size(tspan),2) ==2)
     tInit = tspan(1);
@@ -42,9 +57,8 @@ function [time,u] = prs_t(amp, delay,timeSample,tspan)
   values = zeros(length(time),1);
   t = tInit;
   i = 1;
-  nt = floor(delay/timeSample);
   while(t<tEnd)
-    tr = timeSample*randi([nt,2*nt]);
+    tr = timeSample*randi(rangeTime);
     if(tEnd -t < tr)
       tr = tEnd -t;
     end
