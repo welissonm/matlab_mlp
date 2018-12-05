@@ -30,7 +30,7 @@ function [time,u,t_trans,u_trans] = prs_t(amp, delay,timeSample,tspan)
 	nt = floor(delay/timeSample);
 	rangeTime = [nt,2*nt];
   else
-	rangeTime = delay;
+	rangeTime = [floor(delay(1)/timeSample),floor(delay(2)/timeSample)];
 	if(rangeTime(1) >= rangeTime(2))
 		error('o elemento do indice 1 do argumento #2 deve ser menor que o indice 2');
 	end
