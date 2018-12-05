@@ -43,9 +43,9 @@ function newff = levenbergM(dataset,nnet, tol,varargin)
 		end
 	end
 	delta = cell(1,nnet.layers);
-	dW = cell(1,nnet.layers);
+	%dW = cell(1,nnet.layers);
 	E = zeros(p,n);
-	J = [];
+	%J = [];
 	%J = dW;
 	wOld = cell(1,nnet.layers);
   for i=1:nnet.layers
@@ -59,15 +59,19 @@ function newff = levenbergM(dataset,nnet, tol,varargin)
 		k = 1;
 		epoch = epoch+1;
 		for k=1:p:m-p
-			kp = k+p;
+			kp = k+p-1;
+      
+      J = [];
 			for j=k:kp
+        dW = cell(1,nnet.layers);
 				[y,newff] = sim(dataset.data(:,j),newff);
 				erro = dataset.d(:,j)-y;
-				E(k,:) = erro;
+				E(j,:) = erro';
 				err2 = erro.^2;
 				sumErrorQ = sumErrorQ + erro.^2;
 				%V = sum(sum(err2,1),2);
 				delta{1,newff.layers} = erro.*dlogsim(newff.layer{1,newff.layers}.net);
+          for i=newff.layers-1:-1:1
 					dW{1,i+1} = [dW{1,i+1};kron(delta{1,i+1},newff.layer{1,i}.y')];
 					J = [J, dW{1,i+1}];
 					%wNew{1,i+1} = newff.layer{1,i+1}.w + alpha*(newff.layer{1,i+1}.w - wOld{1,i+1}) + eta*dW{1,i+1};
@@ -77,13 +81,18 @@ function newff = levenbergM(dataset,nnet, tol,varargin)
 				end
 				dW{1,1} = [dW{1,1};kron(delta{1,1},dataset.data(:,1)')];
 				J = [J, dW{1,1}];
+        clear dW;
 				%wNew{1,1} = newff.layer{1,1}.w + alpha*(newff.layer{1,1}.w - wOld{1,1}) + eta*dW{1,1};
 				%wOld{1,1} = newff.layer{1,1}.w;
 				%newff.layer{1,1}.w = wNew{1,1};
 			end
 			J2 = J'*J;
-			dW{1,1} = ((J2 + eta*eye(size(J2)))^-1 )*J'*E;
-			wNew{1,1} =                                                                                                                                                                                                                                                                                                                                                                                
+			dW = ((J2 + eta*eye(size(J2)))^-1 )*J'*E;
+      clear J;
+			for i=1:newff.layers
+         wNew{1,i} = newff.layer{1,i}.w + reshape(dW(1:prod(size(newff.layer{1,i}.w)),i),size(newff.layer{1,i}.w))';
+         newff.layer{1,i}.w = wNew{1,i};
+      end
 		end
 		eqm = sumErrorQ/m;
 		if(sqrt(max(sumErrorQ)/m) <= tol)
