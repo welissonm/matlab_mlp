@@ -1,48 +1,27 @@
-function newff = backpropagation(dataset,nnet, tol,varargin)
-	eta = 0.5;
-	alpha = 0.0;
-	newff = nnet;
-	erro = cell(1,nnet.layers);
-	epoch = 0;
-	epochMax = 1000;
-	eqm = 0;
-	stp = 0;
-	option = [];
-	if(~isfield(dataset,'data') || ~isfield(dataset,'d'))
-		error('O argumento #1 deve ser um struct contendo os campos "data" e "d"');
-	end
-	if(isempty(dataset.data) || isempty(dataset.d))
-		error('Os campos "data" e "d" do argumento #1 nao podem ser vazios');
-	end
-	n = size(dataset.data,1);
-	m = size(dataset.data,2);
-	if(isnnff(nnet) ~= 1)
-		error('O argumento #2 deve ser uma rede neural feedforwad valida');
-	end
-	if(n ~= nnet.numInput)
-		error('o numero de linhas dos dados de entrada nao corresponde ao numero de entradas da rede.');
-	end
-	if(abs(tol) < eps)
-		error('o modulo do argumento #3 nao pode ser menor que eps');
-	end
-	if(~isempty(varargin))
-		option = varargin{1};
+function newff = backpropagation(dataset,nnet, tol,eta,varargin)
+  stp = 0;
+  epoch = 0;
+  delta = cell(1,nnet.layers);
+  dW = cell(1,nnet.layers);
+  wOld = cell(1,nnet.layers);
+  newff = nnet;
+  n = size(dataset.data,1);
+  m = size(dataset.data,2);
+  options = [];
+  alpha = 0;
+  epochMax = 1000;
+  if(~isempty(varargin))
+	option = varargin{1};
 		if(isfield(option,'epochMax'))
 			epochMax = option.epochMax;
 		end
-		if(isfield(option,'eta'))
-			eta = option.eta;
-		end
-    if(isfield(option,'alpha'))
+		if(isfield(option,'alpha'))
 			alpha = option.alpha;
 		end
-	end
-	delta = cell(1,nnet.layers);
-	dW = cell(1,nnet.layers);
-	wOld = cell(1,nnet.layers);
+  end
   for i=1:nnet.layers
     %wOld{1,i} = zeros(size(newff.layer{1,i}.w));
-    wOld{1,i} = newff.layer{1,i}.w;
+    wOld{1,i} = nnet.layer{1,i}.w;
   end
   wNew = wOld;
 	while(~stp)
