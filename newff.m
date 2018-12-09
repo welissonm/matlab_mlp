@@ -19,15 +19,24 @@ function nnet = newff(numInput,layers, varargin)
 			for i=1:nnet.layers
 				b(1,i).bias = -1*ones(layers(i),1);
             end
+        else
+            w = cell(1,nnet.layers);
+            b = cell(1,nnet.layers);
+            w{1,1} = rand(layers(1),numInput);
+            b{1,1} = -1*ones(layers(1),1);
+            for i=2:nnet.layers
+              w{1,i} = rand(layers(i),layers(i-1));
+              b{1,i} = -1*ones(layers(i),1);
+            end
         end
   else
     w = cell(1,nnet.layers);
     b = cell(1,nnet.layers);
-    w(1,1) = rand(layers(1),numInput);
-    b(1,1) = -1*ones(layers(1),1);
+    w{1,1} = rand(layers(1),numInput);
+    b{1,1} = -1*ones(layers(1),1);
     for i=2:nnet.layers
-      w(1,i) = rand(layers(i),layers(i-1));
-      b(1,i) = -1*ones(layers(i),1);
+      w{1,i} = rand(layers(i),layers(i-1));
+      b{1,i} = -1*ones(layers(i),1);
     end
   end
 	for i=1:nnet.layers
