@@ -10,10 +10,15 @@ b{1,2} = [0.6;0.6];
 opt = struct('weight',w,'bias',b);
 nnff = newff(2,[2,2],opt);
 data = [0.05,0.05,0.05,0.05;0.10,0.10,0.10,0.10];
-dataset = struct('data',data,'d',[0.01,0.01,0.01,0.01;0.99,0.99,0.99,0.99]);
-y = sim(data,nnff)
+d = [0.01,0.01,0.01,0.01;0.99,0.99,0.99,0.99];
+[dataNorm,meanp,stdp,dNorm,meant,stdt] = prestd(data,d);
+dataset = struct('data',dataNorm,'d',dNorm);
+y = sim(data,nnff);
 opt = struct('eta',0.02,'epochMax',15000,'method','lm');
-sim(dataset.data,train(dataset,nnff, 1e-6,opt))
+%[y, ~] = sim(dataset.data,train(dataset,nnff, 1e-6,opt));
+nnff = train(dataset,nnff, 1e-6,opt);
+[yn, ~] = sim(dataNorm,nnff);
+[y,d2] = poststd(yn,meanp,stdp,dNorm,meant,stdt);
 opt = struct('eta',0.05,'epochMax',15000, 'alpha',(0.5/0.9)*(0.75-0.05));
 newnnf = train(dataset,nnff, 1e-6,opt);
 sim(dataset.data,newnnf)

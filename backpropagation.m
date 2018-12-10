@@ -10,6 +10,7 @@ function newff = backpropagation(dataset,nnet, tol,eta,varargin)
   options = [];
   alpha = 0;
   epochMax = 1000;
+  rmes = 0;
   if(~isempty(varargin))
 	option = varargin{1};
 		if(isfield(option,'epochMax'))
@@ -47,7 +48,9 @@ function newff = backpropagation(dataset,nnet, tol,eta,varargin)
 			newff.layer{1,1}.w = wNew{1,1}; 
 		end
 		eqm = sumErrorQ/m;
-		if(sqrt(max(sumErrorQ)/m) <= tol)
+        rmes = sqrt(max(sumErrorQ)/m);
+        disp(['rmes: ',num2str(rmes)])
+		if( rmes <= tol)
 			stp = 1;
 		elseif(epoch == epochMax)
 			stp =1;

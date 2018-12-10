@@ -6,8 +6,8 @@ function [y,nnff] = sim(inputData, nnet)
 	if(isnnff(nnet) ~= 1)
 		error('O argumento #2 deve ser uma rede neural feedforwad valida');
     end
-    nnet.layer{1,1}.y = zeros(n,m);
-    nnet.layer{1,1}.net = zeros(n,m);
+    nnet.layer{1,1}.y = zeros(size(nnet.layer{1,1}.w,1),m);
+    nnet.layer{1,1}.net = zeros(size(nnet.layer{1,1}.w,1),m);
   for k=2:nnet.layers
       nnet.layer{1,k}.y = zeros(size(nnet.layer{1,k}.w,1),m);
       nnet.layer{1,k}.net = zeros(size(nnet.layer{1,k}.w,1),m);
