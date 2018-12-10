@@ -1,7 +1,6 @@
 function newff = levenbergM(dataset,nnet, tol,eta,varargin)
 	delta = cell(1,nnet.layers);
 	%dW = cell(1,nnet.layers);
-	E = zeros(p,n);
 	%J = [];
 	%J = dW;
 	wOld = cell(1,nnet.layers);
@@ -12,6 +11,7 @@ function newff = levenbergM(dataset,nnet, tol,eta,varargin)
   newff = nnet;
   n = size(dataset.data,1);
   m = size(dataset.data,2);
+  p = n;
   options = [];
   alpha = 0;
   epochMax = 1000;
@@ -22,12 +22,16 @@ function newff = levenbergM(dataset,nnet, tol,eta,varargin)
 		end
 		if(isfield(option,'alpha'))
 			alpha = option.alpha;
-		end
+        end
+        if(isfield(options,'p'))
+            p = options.p;
+        end
   end
   for i=1:nnet.layers
     %wOld{1,i} = zeros(size(newff.layer{1,i}.w));
     wOld{1,i} = nnet.layer{1,i}.w;
   end
+  E = zeros(p,size(nnet.layer{1,end}.w,1));
   kp = 0;
   wNew = wOld;
 	while(~stp)
@@ -57,7 +61,7 @@ function newff = levenbergM(dataset,nnet, tol,eta,varargin)
 			end
       for i=1:newff.layers
         J2 = J{1,i}'*J{1,i};
-			  dW = ((J2 + eta*eye(size(J2)))^-1 )*J{1,i}'*E;
+        dW = ((J2 + eta*eye(size(J2)))^-1 )*J{1,i}'*E;
         wNew{1,i} = newff.layer{1,i}.w + reshape(dW(1:prod(size(newff.layer{1,i}.w)),i),size(newff.layer{1,i}.w))';
         newff.layer{1,i}.w = wNew{1,i};
       end
