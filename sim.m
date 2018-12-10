@@ -5,9 +5,13 @@ function [y,nnff] = sim(inputData, nnet)
 	[n,m] = size(inputData);
 	if(isnnff(nnet) ~= 1)
 		error('O argumento #2 deve ser uma rede neural feedforwad valida');
-	end
-  nnet.layer{1,1}.net = zeros(n,m);
-  nnet.layer{1,1}.y = zeros(n,m);
+    end
+    nnet.layer{1,1}.y = zeros(n,m);
+    nnet.layer{1,1}.net = zeros(n,m);
+  for k=2:nnet.layers
+      nnet.layer{1,k}.y = zeros(size(nnet.layer{1,k}.w,1),m);
+      nnet.layer{1,k}.net = zeros(size(nnet.layer{1,k}.w,1),m);
+  end
   for j=1:m
     %nnet.layer{1,1}.net(:,j) = sum(kron(inputData(:,j),nnet.layer{1,1}.w),1)' + nnet.layer{1,1}.bias;
 	nnet.layer{1,1}.net(:,j) = nnet.layer{1,1}.w*inputData(:,j) + nnet.layer{1,1}.bias;
