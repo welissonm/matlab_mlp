@@ -28,6 +28,7 @@ function newff = backpropagation(dataset,nnet, tol,eta,varargin)
 		sumErrorQ = 0;
 		k = 1;
 		epoch = epoch+1;
+        disp(['epoch: ',num2str(epoch)])
 		for k=1:m
 			[y,newff] = sim(dataset.data(:,k),newff);
 			erro = dataset.d(:,k)-y;
